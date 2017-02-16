@@ -1,0 +1,43 @@
+<html>
+
+<head>
+    <script>
+        if (window.addEventListener) {
+            // For standards-compliant web browsers
+            window.addEventListener("message", handleMessage, false);
+        } else {
+            window.attachEvent("onmessage", handleMessage);
+        }
+
+        function handleMessage(evt) {
+            var data = JSON.parse(evt.data);
+            
+            Quagga.decodeSingle(
+                {
+                    inputStream: {
+                        size: data.imageWidth
+                    },
+                    decoder: {
+                        readers: ["upc_reader", "code_128_reader", "code_39_reader", "code_39_vin_reader", "ean_8_reader", "ean_reader", "upc_e_reader", "codabar_reader"]
+                    },
+                    locator: {
+                        patchSize: "large",
+                        halfSample: true
+                    },
+                    numOfWorkers: 0,
+                    locate: true,
+                    src: data.fileContent,
+                    debug: true
+                },function(result) {
+                    evt.source.postMessage(JSON.stringify(result), "*");
+                });
+                
+        }
+    </script>
+    <script src="quagga.min.js"></script>
+</head>
+
+<body>
+</body>
+    
+</html>
